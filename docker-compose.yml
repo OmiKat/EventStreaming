@@ -1,0 +1,53 @@
+services:
+
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: kafka
+    ports:
+      - "9092:9092"         # your Spring Boot app connects here
+    environment:
+      # KRaft settings — no ZooKeeper needed
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller      # this one node acts as both
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093  # controller listens on 9093 internally
+
+      # Listeners — two listeners defined:
+      # PLAINTEXT = for your app (port 9092)
+      # CONTROLLER = for internal Kafka coordination (port 9093)
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # Basic broker config
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1    # 1 because we have 1 broker
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db      # data persists even if container restarts
+
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: mongo-express
+    ports:
+      - "8081:8081"           # open localhost:8081 in browser
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb      # matches your mongodb container name
+      ME_CONFIG_BASICAUTH: false             # disables login screen (fine for local dev)
+    depends_on:
+      - mongodb               # waits for mongodb to start first
+
+  redis:
+    image: redis:7.2-alpine      # alpine = smaller image size
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongo_data:                    # named volume so MongoDB data survives restarts
