@@ -1,28 +1,27 @@
 services:
 
   kafka:
-    image: apache/kafka:3.9.0
+    image: confluentinc/cp-kafka:7.6.0
     container_name: kafka
     ports:
-      - "9092:9092"         # your Spring Boot app connects here
+      - "9092:9092"
     environment:
-      # KRaft settings — no ZooKeeper needed
       KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: broker,controller      # this one node acts as both
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093  # controller listens on 9093 internally
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
 
-      # Listeners — two listeners defined:
-      # PLAINTEXT = for your app (port 9092)
-      # CONTROLLER = for internal Kafka coordination (port 9093)
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,INTERNAL://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
 
-      # Basic broker config
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1    # 1 because we have 1 broker
-      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+      # KRaft requires a cluster ID — generate one
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
 
   mongodb:
     image: mongo:7.0
