@@ -17,9 +17,8 @@ public class EventController {
 
     @PostMapping("/users")
     public ResponseEntity<String> sendToKafka(@RequestBody Event event){
-
-
-        return new ResponseEntity<>("Successfully sent" , HttpStatus.OK);
+        kafkaTemplate.send("gaming-event-consumers" , event);
+        return new ResponseEntity<>(event.getPlayerId() , HttpStatus.OK);
     }
 
 }
