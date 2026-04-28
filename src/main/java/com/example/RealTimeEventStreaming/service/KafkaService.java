@@ -1,8 +1,7 @@
 package com.example.RealTimeEventStreaming.service;
 
 import com.example.RealTimeEventStreaming.domain.Event;
-import com.example.RealTimeEventStreaming.producer.EventProducer;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.example.RealTimeEventStreaming.PandC.EventProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

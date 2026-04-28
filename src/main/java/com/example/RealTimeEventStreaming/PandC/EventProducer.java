@@ -1,4 +1,4 @@
-package com.example.RealTimeEventStreaming.producer;
+package com.example.RealTimeEventStreaming.PandC;
 
 import com.example.RealTimeEventStreaming.constants.KafkaConstants;
 import com.example.RealTimeEventStreaming.domain.Event;
