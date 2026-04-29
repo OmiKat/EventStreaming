@@ -26,7 +26,7 @@ public class EventController {
 
     @PostMapping
     @Operation(summary = "Publish a gaming event",
-            description = "Accepts a player event and publishes it to Kafka for async processing")
+            description = "Accepts a player event and publishes it to Kafka for async processing") //swagger anno
     public ResponseEntity<Map<String , String>> sendToKafka(@RequestBody Event event){
         kafkaService.publishEvent(event);
         return ResponseEntity
@@ -37,6 +37,7 @@ public class EventController {
                         "message" , "sent to kafka successfully"
                 ));
     }
+
     @GetMapping("full/history")
     public ResponseEntity<List<Event>> getHistory(){
         List<Event> fullhistory = historyService.getHistory();
@@ -48,8 +49,7 @@ public class EventController {
     @GetMapping("/history/player")
     public ResponseEntity<?> getPlayerHistory(
             @RequestParam String playerId,
-            @RequestParam(required = false ) String eventType
-    ){
+            @RequestParam(required = false ) String eventType){
         try {
             List<Event> playerHistory =
                     (eventType != null)
@@ -66,9 +66,7 @@ public class EventController {
             return ResponseEntity
                     .badRequest()
                     .body(Map.of("error", "Invalid event type : " + eventType));
-
         }
-
     }
 
     @GetMapping("/stats")
