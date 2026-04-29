@@ -37,8 +37,7 @@ public class EventConsumer {
     private void saveToMongoDB(Event event){
         try {
             repo.save(event);
-            log.info("Saved to MongoDB: event [{}] player [{}]"
-                    , event.getEventType(), event.getPlayerId());
+            log.info("Saved to MongoDB: event [{}] player [{}]", event.getEventType(), event.getPlayerId());
         } catch (Exception e) {
             log.error(" Failed to save to MongoDB: event [{}] player [{}] — {}",
                     event.getEventType(), event.getPlayerId(), e.getMessage());
