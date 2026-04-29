@@ -45,6 +45,7 @@ public class EventController {
                 .body(fullhistory);
     }
 
+
     @GetMapping("/history/player")
     public ResponseEntity<?> getPlayerHistory(
             @RequestParam String playerId,
